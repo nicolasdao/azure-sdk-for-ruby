@@ -27,6 +27,16 @@ describe Azure::CloudServiceManagementService do
     response
   end
   let(:response_body) { Nokogiri::XML response.body }
+  let(:slot) { "Staging" }
+  let(:cloud_service_name) { "testservice" }
+  let(:get_deployment_request_path) { "/services/hostedservices/#{cloud_service_name}/deploymentslots/#{slot}" }
+  let(:deployment_xml) { Fixtures['get_deployment'] }
+  let(:deployment_response) do
+    response = mock
+    response.stubs(:body).returns(deployment_xml)
+    response
+  end
+  let(:deployment_response_body) { Nokogiri::XML deployment_response.body }
 
   before do
     Loggerx.expects(:puts).returns(nil).at_least(0)
@@ -90,5 +100,23 @@ describe Azure::CloudServiceManagementService do
       subject.create_cloud_service 'cloud-service-3'
     end
 
+  end
+
+  describe '#get_deployment' do
+  	before do
+  		ManagementHttpRequest.stubs(:new).with(method, get_deployment_request_path, nil).returns(mock_request)
+  		mock_request.expects(:call).returns(deployment_response_body)
+  	end
+
+  	it 'Return a Deployment object with all its statuses and details if the it exists for the specific cloud service and slot.' do
+  		deployment = subject.get_deployment(cloud_service_name, {:slot => slot})
+  		deployment.must_be_kind_of Azure::CloudServiceManagement::Deployment
+  		deployment.deployment_slot.must_equal slot
+  		deployment.role_instances.size.must_equal 1
+  		deployment.role_instances[0].instance_endpoints.size.must_equal 3
+  		deployment.roles.size.must_equal 1
+  		deployment.roles[0].configuration_sets.size.must_equal 1
+  		deployment.virtual_ips.size.must_equal 1
+  	end
   end
 end
