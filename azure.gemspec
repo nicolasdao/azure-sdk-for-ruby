@@ -17,14 +17,18 @@ require "date"
 require File.expand_path('../lib/azure/version', __FILE__)
 
 Gem::Specification.new do |s|
-  s.name    = "azure"
+  s.name    = "azure-plus"
   s.version = Azure::Version
 
   s.authors     = ["Microsoft Corporation", "AppFog"]
   s.email       = "azureruby@microsoft.com"
   s.description = "Windows Azure Client Library for Ruby"
-  s.summary     = "Official ruby client library to consume Windows Azure services."
-  s.homepage    = "http://github.com/WindowsAzure/azure-sdk-for-ruby"
+  s.summary     = "Non-Official ruby client library to consume Windows Azure services. 
+    As of June 2014, the official gem witten by Microsoft(0.6.4) only covers a few methods 
+    from the vast Azure REST API. I needed more support(e.g. swapping, differentiating between 
+    'production' and 'staging' deployment, deploying .cspkg to new/existing cloud service, ...).
+    This project is a fork of https://github.com/nicolasdao/azure-sdk-for-ruby.git"
+  s.homepage    = "https://github.com/nicolasdao/azure-sdk-for-ruby.git"
   s.license     = 'Apache License, Version 2.0'
   s.files       = `git ls-files`.split("\n")
 
